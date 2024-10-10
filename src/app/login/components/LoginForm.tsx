@@ -26,8 +26,6 @@ const LoginForm = () => {
     <Form
       layout="vertical"
       name="basic"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
       style={{
         maxWidth: 600,
       }}
@@ -48,9 +46,15 @@ const LoginForm = () => {
         ]}
       >
         <Input
-          prefix={<MailOutlined className="text-indigo-500" />}
+          prefix={<MailOutlined style={{ color: '#636AE8FF' }} />}
           placeholder="Enter your email"
-          className="rounded-lg border-0 bg-indigo-100 px-3 py-2"
+          style={{
+            backgroundColor: '#F2F2FDFF',
+            borderRadius: '6px',
+            border: '0px',
+            paddingTop: '7px',
+            paddingBottom: '7px',
+          }}
         />
       </Form.Item>
 
@@ -75,17 +79,28 @@ const LoginForm = () => {
       <Form.Item<FieldType> name="remember" valuePropName="checked">
         <div className="flex justify-between">
           <Checkbox>Remember me</Checkbox>
-          <p className="text-[#636AE8FF]">Forgot password?</p>
+          <p className="text-blue-500">Forgot password?</p>
         </div>
       </Form.Item>
 
-      <Form.Item>
+      <Form.Item
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
         <Button
           type="primary"
           htmlType="submit"
-          style={{ width: '100%', backgroundColor: '#636AE8FF' }}
+          style={{
+            backgroundColor: '#636AE8FF',
+            paddingTop: '20px',
+            paddingBottom: '20px',
+            paddingLeft: '80px',
+            paddingRight: '80px',
+          }}
         >
-          Submit
+          Login
         </Button>
       </Form.Item>
     </Form>
