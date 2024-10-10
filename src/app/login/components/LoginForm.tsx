@@ -48,15 +48,9 @@ const LoginForm = () => {
         ]}
       >
         <Input
-          prefix={<MailOutlined style={{ color: '#636AE8FF' }} />}
+          prefix={<MailOutlined className="text-indigo-500" />}
           placeholder="Enter your email"
-          style={{
-            backgroundColor: '#F2F2FDFF',
-            borderRadius: '6px',
-            border: '0px',
-            paddingTop: '7px',
-            paddingBottom: '7px',
-          }}
+          className="rounded-lg border-0 bg-indigo-100 px-3 py-2"
         />
       </Form.Item>
 
@@ -78,18 +72,14 @@ const LoginForm = () => {
         />
       </Form.Item>
 
-      <Form.Item<FieldType>
-        name="remember"
-        valuePropName="checked"
-        wrapperCol={{ offset: 0, span: 16 }}
-      >
+      <Form.Item<FieldType> name="remember" valuePropName="checked">
         <div className="flex justify-between">
           <Checkbox>Remember me</Checkbox>
           <p className="text-[#636AE8FF]">Forgot password?</p>
         </div>
       </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 0, span: 16 }}>
+      <Form.Item>
         <Button
           type="primary"
           htmlType="submit"
