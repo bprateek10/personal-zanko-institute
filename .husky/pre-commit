@@ -1,3 +1,9 @@
 #!/bin/sh
 npx lint-staged
-npm test
+# Check if there are any test files to run
+if [ -z "$(git diff --name-only --cached | grep -E '\.test\.(js|jsx|ts|tsx)$')" ]; then
+  echo "No test files found. Skipping tests."
+else
+  # Run tests if test files exist
+  npm test --changed
+fi
