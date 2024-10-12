@@ -5,5 +5,5 @@ if [ -z "$(git diff --name-only --cached | grep -E '\.test\.(js|jsx|ts|tsx)$')" 
   echo "No test files found. Skipping tests."
 else
   # Run tests if test files exist
-  npm test --changed
+  npm test
 fi
