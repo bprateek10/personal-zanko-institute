@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import LoginForm from '@/app/login/components/LoginForm';
+import LoginForm from './components/LoginForm';
 
 const Login = () => {
   return (
