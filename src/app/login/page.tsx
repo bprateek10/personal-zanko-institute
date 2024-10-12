@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import LoginForm from '@/app/login/components/LoginForm';
+import LoginForm from './components/LoginForm';
 
 const Login = () => {
   return (
@@ -30,7 +30,7 @@ const Login = () => {
           <div className="flex justify-center">
             <h1 className="text-[32px] font-bold leading-10">Sign In</h1>
           </div>
-          <div className="my-auto">
+          <div className="my-auto" data-testid="login-form">
             <LoginForm />
           </div>
         </div>
