@@ -30,7 +30,7 @@ const Login = () => {
           <div className="flex justify-center">
             <h1 className="text-[32px] font-bold leading-10">Sign In</h1>
           </div>
-          <div className="my-auto" data-testid="login-form">
+          <div className="my-auto">
             <LoginForm />
           </div>
         </div>

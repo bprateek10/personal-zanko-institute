@@ -19,8 +19,8 @@ describe('Login Component', () => {
     const descriptionElement = screen.getByText(/where amazing things happen/i);
     expect(descriptionElement).toBeInTheDocument();
 
-    // Check if the LoginForm is present
-    const loginForm = screen.getByTestId('login-form');
+    // Check if LoginForm is rendered by looking for an element inside it
+    const loginForm = screen.getByLabelText(/email/i); // Example to find an email input
     expect(loginForm).toBeInTheDocument();
   });
 });
