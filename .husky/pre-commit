@@ -4,6 +4,11 @@ npx lint-staged
 if [ -z "$(git diff --name-only --cached | grep -E '\.test\.(js|jsx|ts|tsx)$')" ]; then
   echo "No test files found. Skipping tests."
 else
-  # Run tests if test files exist
-  npm test
+  # Run tests in non-watch mode and check if they pass
+  if npm test -- --watch=false; then
+    echo "All tests passed. Proceeding with commit."
+  else
+    echo "Tests failed. Commit aborted."
+    exit 1
+  fi
 fi
