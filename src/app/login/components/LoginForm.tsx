@@ -61,7 +61,10 @@ const LoginForm = () => {
       <Form.Item<FieldType>
         label="Password"
         name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
+        rules={[
+          { required: true, message: 'Please input your password!' },
+          { min: 8, message: 'Password must be at least 8 characters long!' },
+        ]}
       >
         <Input.Password
           prefix={<LockOutlined style={{ color: '#636AE8FF' }} />}
