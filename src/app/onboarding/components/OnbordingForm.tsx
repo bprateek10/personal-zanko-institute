@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import type { FormProps } from 'antd';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 
 type FieldType = {
@@ -9,7 +9,7 @@ type FieldType = {
   lName?: string;
   email?: string;
   password?: string;
-  remember?: string;
+  confirm_password?: string;
 };
 
 const OnboardingForm = () => {
@@ -31,7 +31,6 @@ const OnboardingForm = () => {
       style={{
         maxWidth: 600,
       }}
-      initialValues={{ remember: true }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
@@ -110,7 +109,10 @@ const OnboardingForm = () => {
       <Form.Item<FieldType>
         label="Password"
         name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
+        rules={[
+          { required: true, message: 'Please input your password!' },
+          { min: 8, message: 'Password must be at least 8 characters long!' },
+        ]}
         style={{ marginBottom: '10px' }}
       >
         <Input.Password
@@ -126,13 +128,16 @@ const OnboardingForm = () => {
         />
       </Form.Item>
       <Form.Item<FieldType>
-        label="Password"
-        name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
+        label="Confirm Pass"
+        name="confirm_password"
+        rules={[
+          { required: true, message: 'Please confirm your password!' },
+          { min: 8, message: 'Password must be at least 8 characters long!' },
+        ]}
       >
         <Input.Password
           prefix={<LockOutlined style={{ color: '#636AE8FF' }} />}
-          placeholder="Enter your password"
+          placeholder="Re-enter your password"
           style={{
             backgroundColor: '#F2F2FDFF',
             borderRadius: '6px',
