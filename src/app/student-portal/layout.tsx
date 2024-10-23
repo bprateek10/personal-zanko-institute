@@ -68,7 +68,7 @@ const EmbeddedLayout = ({
                 <li
                   key={itemId}
                   className={`group flex cursor-pointer flex-col items-center text-center ${
-                    isActive ? 'text-green-600' : 'text-gray-600'
+                    isActive ? 'text-indigo-600' : 'text-gray-600'
                   }`}
                   onClick={() => {
                     onClick(comp);

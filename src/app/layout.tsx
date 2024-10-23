@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import localFont from 'next/font/local';
 import './globals.css';
+import { ConfigProvider } from 'antd';
+import { primaryColor } from './constant/themeConstant';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -29,7 +31,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AntdRegistry>{children}</AntdRegistry>
+        <AntdRegistry>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: primaryColor,
+              },
+            }}
+          >
+            {children}
+          </ConfigProvider>
+        </AntdRegistry>
       </body>
     </html>
   );

@@ -95,13 +95,7 @@ const LoginForm = () => {
         <Button
           type="primary"
           htmlType="submit"
-          style={{
-            backgroundColor: '#636AE8FF',
-            paddingTop: '20px',
-            paddingBottom: '20px',
-            paddingLeft: '80px',
-            paddingRight: '80px',
-          }}
+          className="!pb-5 !pl-20 !pr-20 !pt-5"
         >
           Login
         </Button>

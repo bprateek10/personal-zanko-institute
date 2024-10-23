@@ -1,55 +1,113 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import EmbeddedLayout from './layout';
 import { describe, it, expect, vi } from 'vitest';
-import { useRouter } from 'next/navigation';
+import EmbeddedLayout from './layout';
+import {
+  UserOutlined,
+  PlayCircleOutlined,
+  MailOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
 
-const mockPush = vi.fn();
-
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: mockPush,
-  }),
+vi.mock('next/link', () => ({
+  default: ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => <a href={href}>{children}</a>,
 }));
 
 describe('EmbeddedLayout Component', () => {
-  it('renders the tabs correctly', () => {
-    render(
-      <EmbeddedLayout>
-        <div>Test Content</div>
-      </EmbeddedLayout>,
-    );
+  const items = [
+    { label: 'Students', key: 'students', icon: UserOutlined },
+    { label: 'Staff', key: 'staff', icon: UserOutlined },
+    { label: 'Content', key: 'content', icon: PlayCircleOutlined },
+    { label: 'Conversation', key: 'conversation', icon: MailOutlined },
+    { label: 'Sign-Up', key: 'signup', icon: LogoutOutlined },
+  ];
 
-    expect(screen.getByText('Students')).toBeDefined();
-    expect(screen.getByText('Staff')).toBeDefined();
-    expect(screen.getByText('Content')).toBeDefined();
-    expect(screen.getByText('Conversation')).toBeDefined();
-    expect(screen.getByText('Sign-Up')).toBeDefined();
+  it('should render all navigation items', () => {
+    render(<EmbeddedLayout>Test Child Content</EmbeddedLayout>);
+
+    items.forEach((item) => {
+      expect(screen.getByText(item.label)).toBeInTheDocument();
+    });
   });
 
-  it('should navigate to the correct route on tab change', () => {
-    const router = useRouter();
-    render(
-      <EmbeddedLayout>
-        <div>Test Content</div>
-      </EmbeddedLayout>,
+  it('should highlight the "Students" tab by default', () => {
+    render(<EmbeddedLayout>Test Child Content</EmbeddedLayout>);
+
+    const studentsTab = screen.getByText('Students');
+    expect(studentsTab).toHaveClass('text-indigo-600');
+  });
+
+  it('should change the active tab when a tab is clicked', () => {
+    render(<EmbeddedLayout>Test Child Content</EmbeddedLayout>);
+
+    const staffTab = screen.getByText('Staff');
+    const studentsTab = screen.getByText('Students');
+
+    // Staff tab is inactive at the beginning
+    expect(staffTab).toHaveClass('text-gray-600');
+
+    // Simulate clicking on the 'Staff' tab
+    fireEvent.click(staffTab);
+
+    // Expect 'Staff' tab to be active
+    expect(staffTab).toHaveClass('text-indigo-600');
+
+    // Expect 'Students' tab to become inactive
+    expect(studentsTab).toHaveClass('text-gray-600');
+  });
+
+  it('should navigate to correct href when a tab is clicked', () => {
+    render(<EmbeddedLayout>Test Child Content</EmbeddedLayout>);
+
+    const contentTab = screen.getByText('Content');
+
+    // Simulate clicking on 'Content' tab
+    fireEvent.click(contentTab);
+
+    expect(contentTab.closest('a')).toHaveAttribute(
+      'href',
+      '/student-portal/content',
     );
 
-    // Simulate a tab click on "Staff"
-    fireEvent.click(screen.getByText('Staff'));
+    const staffTab = screen.getByText('Staff');
 
-    // Verify if the `router.push` was called with the correct route
-    expect(mockPush).toHaveBeenCalledWith('/student-portal/staff');
+    // Simulate clicking on 'Staff' tab
+    fireEvent.click(staffTab);
 
-    // Simulate a tab click on "Conversation"
-    fireEvent.click(screen.getByText('Conversation'));
-    expect(mockPush).toHaveBeenCalledWith('/student-portal/conversation');
+    expect(staffTab.closest('a')).toHaveAttribute(
+      'href',
+      '/student-portal/staff',
+    );
 
-    // Simulate a tab click on "Content"
-    fireEvent.click(screen.getByText('Content'));
-    expect(mockPush).toHaveBeenCalledWith('/student-portal/content');
+    const conversationTab = screen.getByText('Conversation');
 
-    // Simulate a tab click on "SignUp"
-    fireEvent.click(screen.getByText('Sign-Up'));
-    expect(mockPush).toHaveBeenCalledWith('/student-portal/signup');
+    // Simulate clicking on 'Conversation' tab
+    fireEvent.click(conversationTab);
+
+    expect(conversationTab.closest('a')).toHaveAttribute(
+      'href',
+      '/student-portal/conversation',
+    );
+
+    const signUpTab = screen.getByText('Sign-Up');
+
+    // Simulate clicking on 'Sign-Up' tab
+    fireEvent.click(signUpTab);
+
+    expect(signUpTab.closest('a')).toHaveAttribute(
+      'href',
+      '/student-portal/signup',
+    );
+  });
+
+  it('should render children content', () => {
+    render(<EmbeddedLayout>Test Child Content</EmbeddedLayout>);
+
+    expect(screen.getByText('Test Child Content')).toBeDefined();
   });
 });
