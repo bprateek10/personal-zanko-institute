@@ -6,13 +6,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 type FieldType = {
-  firstname?: string;
-  lastname?: string;
   email?: string;
   password?: string;
 };
 
-const SignupForm: React.FC = () => {
+const SigninForm: React.FC = () => {
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     // eslint-disable-next-line no-console
     console.log('Success:', values);
@@ -25,7 +23,7 @@ const SignupForm: React.FC = () => {
     console.log('Failed:', errorInfo);
   };
   return (
-    <div className="mt-4 flex min-h-screen items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm rounded-lg border-2 border-gray-300 bg-white p-8 shadow">
         <div className="mb-6 text-center">
           <Image
@@ -36,21 +34,20 @@ const SignupForm: React.FC = () => {
             height="100"
             priority
           />
-          <h2 className="text-lg font-semibold">Create your account</h2>
+          <h2 className="text-lg font-semibold">Welcome back!</h2>
           <p className="text-gray-500">
-            Already have an account?{' '}
-            <Link href="/student-portal/signin" className="text-indigo-500">
-              Sign in
+            Don’t have an account?{' '}
+            <Link href="/student-portal/signup" className="text-indigo-600">
+              Create an account
             </Link>
           </p>
         </div>
 
         <Button
-          className="mb-4 flex w-full items-center justify-center gap-2"
-          type="primary"
+          className="mb-4 flex w-full items-center justify-center gap-2 bg-indigo-500"
           icon={<GoogleOutlined />}
         >
-          Sign up with Google
+          Sign in with Google
         </Button>
 
         <div className="my-4 flex items-center">
@@ -68,26 +65,6 @@ const SignupForm: React.FC = () => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-          <Form.Item
-            label="First name"
-            name="firstName"
-            rules={[
-              { required: true, message: 'Please input your first name!' },
-            ]}
-          >
-            <Input placeholder="Enter your first name" />
-          </Form.Item>
-
-          <Form.Item
-            label="Last name"
-            name="lastName"
-            rules={[
-              { required: true, message: 'Please input your last name!' },
-            ]}
-          >
-            <Input placeholder="Enter your last name" />
-          </Form.Item>
-
           <Form.Item
             label="Email"
             name="email"
@@ -108,15 +85,25 @@ const SignupForm: React.FC = () => {
             Must be at least 12 characters
           </div>
 
+          <p className="mb-4 text-gray-500">
+            <a href="/student-portal/signup" className="text-indigo-600">
+              Forgot your password?
+            </a>
+          </p>
+
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="w-full">
-              Sign up
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="w-full bg-indigo-500"
+            >
+              Sign In
             </Button>
           </Form.Item>
         </Form>
 
         <div className="mt-4 text-center text-sm text-gray-500">
-          {"By signing up you agree to Unibuddy's"}{' '}
+          {'By signing up you agree to Unib global'}{' '}
           <Link href="/student-portal/signup" className="text-blue-600">
             Privacy Policy
           </Link>{' '}
@@ -131,4 +118,4 @@ const SignupForm: React.FC = () => {
   );
 };
 
-export default SignupForm;
+export default SigninForm;
