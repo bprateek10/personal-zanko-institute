@@ -18,6 +18,14 @@ vi.mock('next/link', () => ({
   }) => <a href={href}>{children}</a>,
 }));
 
+const pushMock = vi.fn();
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: pushMock,
+  }),
+}));
+
 describe('EmbeddedLayout Component', () => {
   const items = [
     { label: 'Students', key: 'students', icon: UserOutlined },

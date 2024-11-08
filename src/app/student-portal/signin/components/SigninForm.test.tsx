@@ -1,6 +1,12 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import '@testing-library/jest-dom';
 import SigninForm from './SigninForm';
+import { useRouter } from 'next/navigation';
+
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
+}));
 
 // Mock next/image since it requires a valid external image loader
 vi.mock('next/image', () => ({
@@ -10,7 +16,23 @@ vi.mock('next/image', () => ({
   ),
 }));
 
+vi.mock('@/hooks/useApi', () => ({
+  useMutateData: vi.fn(() => ({
+    mutateAsync: vi.fn().mockResolvedValue({ access_token: 'mock_token' }),
+  })),
+  useGetData: vi.fn(() => ({
+    data: null,
+    refetch: vi.fn(),
+  })),
+}));
+
 describe('SigninForm Component', () => {
+  const mockPush = vi.fn();
+
+  beforeEach(() => {
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+  });
+
   it('should render the Signin form correctly', () => {
     render(<SigninForm />);
 
@@ -96,5 +118,22 @@ describe('SigninForm Component', () => {
 
     expect(termsOfUseLink).toBeInTheDocument();
     expect(termsOfUseLink).toHaveAttribute('href', '/student-portal/signup');
+  });
+
+  it('should submit the form and redirect to settings page on successful sign-in', async () => {
+    render(<SigninForm />);
+
+    fireEvent.change(screen.getByLabelText('Email'), {
+      target: { value: 'student@yopmail.com' },
+    });
+    fireEvent.change(screen.getByLabelText('Password'), {
+      target: { value: 'pass1234' },
+    });
+
+    fireEvent.click(screen.getByText('Sign In'));
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/student-portal/setting');
+    });
   });
 });

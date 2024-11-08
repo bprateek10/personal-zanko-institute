@@ -1,13 +1,14 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   UserOutlined,
   PlayCircleOutlined,
   MailOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
-
-//import './tabsComponent.css';
+import { modules } from '@/utils/app-constant';
+import { hasToken } from '../../utils/auth';
+import { useRouter } from 'next/navigation';
 
 import Link from 'next/link';
 
@@ -51,10 +52,21 @@ const EmbeddedLayout = ({
   children: React.ReactNode;
 }) => {
   const [current, setCurrent] = useState<string>('students');
+  const router = useRouter();
 
   const onClick = (e: ItemType): void => {
     setCurrent(e.key as string);
   };
+
+  const checkToken = useCallback(() => {
+    if (!hasToken(modules.students)) {
+      router.push('/student-portal/signin');
+    }
+  }, [router]);
+
+  useEffect(() => {
+    checkToken();
+  }, [checkToken]);
 
   return (
     <div className="m-auto max-w-4xl">

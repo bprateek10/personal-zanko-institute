@@ -4,8 +4,12 @@ import { Form, Input, Select, Button, Switch, Radio, Row, Col } from 'antd';
 import { EditOutlined, SaveOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 const countryCodes = require('country-codes-list');
-
+import { useMutateData } from '@/hooks/useApi';
 const { Option } = Select;
+import { modules } from '@/utils/app-constant';
+import { removeToken } from '@/utils/auth';
+import { removeUser } from '@/utils/user';
+import { useRouter } from 'next/navigation';
 
 type Editable = {
   [key: string]: boolean;
@@ -16,6 +20,7 @@ type CountyCodeType = {
 };
 
 const SettingForm: React.FC = () => {
+  const router = useRouter();
   const [isEditable, setIsEditable] = useState<Editable>({
     firstName: false,
     lastName: false,
@@ -24,6 +29,11 @@ const SettingForm: React.FC = () => {
   });
   const phoneCodes: [CountyCodeType] = countryCodes.all();
   const [form] = Form.useForm();
+  const signOutMutation = useMutateData<{ access_token: string }>(
+    '/api/students/v1/sessions',
+    'Delete',
+    modules.students,
+  );
 
   const toggleEdit = (field: string) => {
     setIsEditable((prevState: Editable) => ({
@@ -41,6 +51,17 @@ const SettingForm: React.FC = () => {
       .catch((errorInfo) => {
         // eslint-disable-next-line no-console
       });
+  };
+
+  const logOut = async () => {
+    try {
+      await signOutMutation.mutateAsync({});
+      removeToken(modules.students);
+      removeUser(modules.students);
+      router.push('/student-portal/signin');
+    } catch (error) {
+      const err = error;
+    }
   };
 
   return (
@@ -329,7 +350,10 @@ const SettingForm: React.FC = () => {
               {'Delete account'}
             </Link>
           </div>
-          <Button className="!border-0 !pl-0 text-sm !text-indigo-600">
+          <Button
+            onClick={logOut}
+            className="!border-0 !pl-0 text-sm !text-indigo-600"
+          >
             {'Log out'}
           </Button>
         </Form>

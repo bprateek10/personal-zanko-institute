@@ -1,9 +1,15 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Input, Form, FormProps } from 'antd';
 import { GoogleOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useMutateData, useGetData } from '@/hooks/useApi';
+import { setToken } from '@/utils/auth';
+import { modules } from '@/utils/app-constant';
+import { Student } from '@/interface/modals';
+import { setUser } from '@/utils/user';
 
 type FieldType = {
   email?: string;
@@ -11,19 +17,40 @@ type FieldType = {
 };
 
 const SigninForm: React.FC = () => {
-  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    // eslint-disable-next-line no-console
-    console.log('Success:', values);
+  const router = useRouter();
+
+  const signInMutation = useMutateData<{ access_token: string }>(
+    '/api/students/v1/sessions',
+    'Post',
+    modules.students,
+  );
+  const { data, refetch } = useGetData<Student>(
+    '/api/students/v1/me',
+    ['me'],
+    false,
+    modules.students,
+  );
+
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    try {
+      const { email, password } = values;
+      const res = await signInMutation.mutateAsync({ email, password });
+      setToken(res.access_token, modules.students);
+      refetch();
+      router.push('/student-portal/setting');
+    } catch (error) {
+      const err = error;
+    }
   };
 
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
-    errorInfo,
-  ) => {
-    // eslint-disable-next-line no-console
-    console.log('Failed:', errorInfo);
-  };
+  useEffect(() => {
+    if (data) {
+      setUser(data, modules.students);
+    }
+  }, [data, refetch, router]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="mt-4 flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm rounded-lg border-2 border-gray-300 bg-white p-8 shadow">
         <div className="mb-6 text-center">
           <Image
@@ -46,6 +73,7 @@ const SigninForm: React.FC = () => {
         <Button
           className="mb-4 flex w-full items-center justify-center gap-2 bg-indigo-500"
           icon={<GoogleOutlined />}
+          type={'primary'}
         >
           Sign in with Google
         </Button>
@@ -62,7 +90,6 @@ const SigninForm: React.FC = () => {
           layout="vertical"
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item

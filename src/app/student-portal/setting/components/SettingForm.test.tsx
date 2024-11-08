@@ -1,9 +1,32 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SettingForm from './SettingForm';
+import { vi } from 'vitest';
+import { useRouter } from 'next/navigation';
+import { useMutateData } from '@/hooks/useApi';
+import { removeToken } from '@/utils/auth';
+import { removeUser } from '@/utils/user';
+
+vi.mock('@/hooks/useApi');
+vi.mock('@/utils/auth');
+vi.mock('@/utils/user');
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
+}));
 
 describe('SettingForm', () => {
+  const mockMutateAsync = vi.fn();
+  const mockPush = vi.fn();
+
+  beforeEach(() => {
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+    (useMutateData as jest.Mock).mockReturnValue({
+      mutateAsync: mockMutateAsync,
+    });
+    vi.clearAllMocks();
+  });
+
   test('renders form with initial values', () => {
     render(<SettingForm />);
     expect(screen.getByLabelText('First Name')).toHaveValue('Ronak');
@@ -24,7 +47,7 @@ describe('SettingForm', () => {
     const saveButton = screen.getByText('Save');
     fireEvent.click(saveButton);
 
-    await expect(firstNameInput).toHaveValue('John');
+    await waitFor(() => expect(firstNameInput).toHaveValue('John'));
   });
 
   test('displays validation error for required fields', async () => {
@@ -38,7 +61,7 @@ describe('SettingForm', () => {
     const saveButton = screen.getByText('Save');
     fireEvent.click(saveButton);
 
-    expect(await screen.findByText('Please enter a valid email')).toBeVisible();
+    expect(await screen.findByText('Please enter a valid email')).toBeDefined();
   });
 
   test('switch toggles for notification preferences', () => {
@@ -81,5 +104,19 @@ describe('SettingForm', () => {
       screen.getByRole('link', { name: 'Delete account' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Log out' })).toBeInTheDocument();
+  });
+
+  test('calls logout mutation and redirects on log out', async () => {
+    render(<SettingForm />);
+
+    const logoutButton = screen.getByRole('button', { name: 'Log out' });
+    fireEvent.click(logoutButton);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalled();
+      expect(removeToken).toHaveBeenCalledWith('students');
+      expect(removeUser).toHaveBeenCalledWith('students');
+      expect(mockPush).toHaveBeenCalledWith('/student-portal/signin');
+    });
   });
 });

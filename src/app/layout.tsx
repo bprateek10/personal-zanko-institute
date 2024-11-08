@@ -4,6 +4,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { ConfigProvider } from 'antd';
 import { primaryColor } from './constant/themeConstant';
+import Provider from '@/utils/Provider';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -31,17 +32,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AntdRegistry>
-          <ConfigProvider
-            theme={{
-              token: {
-                colorPrimary: primaryColor,
-              },
-            }}
-          >
-            {children}
-          </ConfigProvider>
-        </AntdRegistry>
+        <Provider>
+          <AntdRegistry>
+            <ConfigProvider
+              theme={{
+                token: {
+                  colorPrimary: primaryColor,
+                },
+              }}
+            >
+              {children}
+            </ConfigProvider>
+          </AntdRegistry>
+        </Provider>
       </body>
     </html>
   );
