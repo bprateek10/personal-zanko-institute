@@ -1,32 +1,46 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SignupForm from './SignupForm';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { useMutateData } from '@/hooks/useApi';
+import { useRouter } from 'next/navigation';
+
+// Mock useMutateData and useRouter hooks
+vi.mock('@/hooks/useApi', () => ({
+  useMutateData: vi.fn(),
+}));
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
+}));
 
 describe('SignupForm Component', () => {
+  const mockPush = vi.fn();
+  const mockMutateAsync = vi.fn();
+
+  beforeEach(() => {
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+    (useMutateData as jest.Mock).mockReturnValue({
+      mutateAsync: mockMutateAsync,
+      isError: false,
+      error: null,
+    });
+  });
+
   it('should render the form with all fields', () => {
     render(<SignupForm />);
 
-    // Check for the Google Sign-in button
     expect(screen.getByText('Sign up with Google')).toBeDefined();
-
-    // Check for form fields
     expect(screen.getByLabelText(/First name/i)).toBeDefined();
     expect(screen.getByLabelText(/Last name/i)).toBeDefined();
     expect(screen.getByLabelText(/Email/i)).toBeDefined();
     expect(screen.getByLabelText(/Password/i)).toBeDefined();
-
-    // Check for sign-up button
     expect(screen.getByText('Sign up')).toBeDefined();
   });
 
   it('should show validation messages when required fields are not filled', async () => {
     render(<SignupForm />);
 
-    // Submit the form without entering any values
     const submitButton = screen.getByText('Sign up');
     await fireEvent.click(submitButton);
-
-    // Check for error messages
 
     expect(
       await screen.findByText('Please input your first name!'),
@@ -37,6 +51,8 @@ describe('SignupForm Component', () => {
   });
 
   it('should allow the form to be submitted when all fields are valid', async () => {
+    mockMutateAsync.mockResolvedValueOnce({ access_token: 'fake-token' });
+
     render(<SignupForm />);
 
     // Fill in the form fields
@@ -54,24 +70,61 @@ describe('SignupForm Component', () => {
       target: { value: 'password1234' },
     });
 
-    // Submit the form
     const submitButton = screen.getByText('Sign up');
     await fireEvent.click(submitButton);
 
-    // Check that the form submission was successful (simulate console log)
-    expect(screen.queryByText('Please input your first name!')).toBeDefined();
-    expect(screen.queryByText('Please input your last name!')).toBeDefined();
-    expect(screen.queryByText('Please input your email!')).toBeDefined();
-    expect(screen.queryByText('Please input your password!')).toBeDefined();
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        student: {
+          first_name: 'John',
+          last_name: 'Doe',
+          email: 'johndoe@example.com',
+          password: 'password1234',
+        },
+      });
+    });
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/student-portal/setting');
+    });
   });
 
   it('should trigger Google Sign-in button click', async () => {
     render(<SignupForm />);
 
-    // Mock Google Sign-in functionality if needed (currently it's a visual test)
     const googleButton = screen.getByText('Sign up with Google');
-
     await fireEvent.click(googleButton);
-    // Expect some behavior after clicking Google Sign-in (can mock API or function call)
+
+    expect(screen.getByText('Sign up with Google')).toBeDefined();
+  });
+
+  it('should show error message when API request fails', async () => {
+    (useMutateData as jest.Mock).mockReturnValueOnce({
+      mutateAsync: vi.fn().mockRejectedValueOnce({ message: 'Server Error' }),
+      isError: true,
+      error: { message: 'Server Error' },
+    });
+
+    render(<SignupForm />);
+
+    fireEvent.change(screen.getByLabelText(/First name/i), {
+      target: { value: 'John' },
+    });
+    fireEvent.change(screen.getByLabelText(/Last name/i), {
+      target: { value: 'Doe' },
+    });
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'johndoe@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/Password/i), {
+      target: { value: 'password1234' },
+    });
+
+    const submitButton = screen.getByText('Sign up');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Server Error')).toBeDefined();
+    });
   });
 });

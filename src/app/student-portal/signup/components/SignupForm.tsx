@@ -1,29 +1,48 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Input, Form, FormProps } from 'antd';
 import { GoogleOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useMutateData, useGetData } from '@/hooks/useApi';
+import { modules } from '@/utils/app-constant';
+import { setToken } from '@/utils/auth';
+import { setUser } from '@/utils/user';
+import Alerts from '@/components/alert';
+import { ApiError } from '@/interface/common';
+import { Student } from '@/interface/modals';
 
 type FieldType = {
-  firstname?: string;
-  lastname?: string;
+  first_name?: string;
+  last_name?: string;
   email?: string;
   password?: string;
 };
 
 const SignupForm: React.FC = () => {
-  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    // eslint-disable-next-line no-console
-    console.log('Success:', values);
+  const router = useRouter();
+
+  const signUpMutation = useMutateData<{ access_token: string }>(
+    '/api/students/v1/registrations',
+    'Post',
+    modules.students,
+  );
+
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    try {
+      const { first_name, last_name, email, password } = values;
+      const res = await signUpMutation.mutateAsync({
+        student: { email, first_name, last_name, password },
+      });
+      setToken(res.access_token, modules.students);
+      setUser(values as Student, modules.students);
+      router.push('/student-portal/setting');
+    } catch (error) {
+      const err = error;
+    }
   };
 
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
-    errorInfo,
-  ) => {
-    // eslint-disable-next-line no-console
-    console.log('Failed:', errorInfo);
-  };
   return (
     <div className="mt-4 flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm rounded-lg border-2 border-gray-300 bg-white p-8 shadow">
@@ -60,17 +79,26 @@ const SignupForm: React.FC = () => {
           </span>
           <hr className="w-1/6 border-gray-300" />
         </div>
-
+        {signUpMutation.isError && (
+          <div className="my-2">
+            <Alerts
+              message={
+                (signUpMutation.error as unknown as ApiError)?.status === 401
+                  ? 'Credentials are wrong.'
+                  : (signUpMutation.error as unknown as ApiError)?.message
+              }
+            />
+          </div>
+        )}
         <Form
           layout="vertical"
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item
             label="First name"
-            name="firstName"
+            name="first_name"
             rules={[
               { required: true, message: 'Please input your first name!' },
             ]}
@@ -80,7 +108,7 @@ const SignupForm: React.FC = () => {
 
           <Form.Item
             label="Last name"
-            name="lastName"
+            name="last_name"
             rules={[
               { required: true, message: 'Please input your last name!' },
             ]}
