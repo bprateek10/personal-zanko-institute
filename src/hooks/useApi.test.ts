@@ -3,7 +3,6 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { useGetData, useMutateData } from './useApi';
-//import { QueryClient, QueryClientProvider  } from '@tanstack/react-query';
 import Providers from '@/utils/Provider';
 
 vi.mock('@/lib/api-client', () => ({
@@ -52,7 +51,7 @@ describe('useApi', () => {
       );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      expect(mockGet).toHaveBeenCalledWith(endpoint, 'students');
+      expect(mockGet).toHaveBeenCalledWith(endpoint);
       expect(result.current.data).toEqual(mockResponse.data);
     });
 
@@ -110,11 +109,7 @@ describe('useApi', () => {
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
-      expect(mockPost).toHaveBeenCalledWith(
-        endpoint,
-        { name: 'Test' },
-        'students',
-      );
+      expect(mockPost).toHaveBeenCalledWith(endpoint, { name: 'Test' });
       expect(result.current.data).toEqual(mockResponse);
     });
 
@@ -137,11 +132,7 @@ describe('useApi', () => {
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
-      expect(mockPut).toHaveBeenCalledWith(
-        endpoint,
-        { name: 'Updated Test' },
-        'students',
-      );
+      expect(mockPut).toHaveBeenCalledWith(endpoint, { name: 'Updated Test' });
       expect(result.current.data).toEqual(mockResponse);
     });
 
@@ -163,7 +154,7 @@ describe('useApi', () => {
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
-      expect(mockDelete).toHaveBeenCalledWith(endpoint, 'students');
+      expect(mockDelete).toHaveBeenCalledWith(endpoint);
       expect(result.current.data).toEqual({});
     });
   });

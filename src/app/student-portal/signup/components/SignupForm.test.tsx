@@ -44,7 +44,7 @@ describe('SignupForm Component', () => {
 
     expect(
       await screen.findByText('Please input your first name!'),
-    ).toBeDefined();
+    ).toBeInTheDocument();
     expect(screen.getByText('Please input your last name!')).toBeDefined();
     expect(screen.getByText('Please input your email!')).toBeDefined();
     expect(screen.getByText('Please input your password!')).toBeDefined();

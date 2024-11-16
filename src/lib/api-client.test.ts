@@ -42,8 +42,8 @@ describe('apiClient', () => {
       json: vi.fn().mockResolvedValueOnce(mockResponse),
     });
 
-    const { Get } = useApiClient();
-    const response = await Get('/test-endpoint', 'students');
+    const { Get } = useApiClient('students');
+    const response = await Get('/test-endpoint');
 
     expect(response).toEqual({ data: mockResponse });
     expect(fetch).toHaveBeenCalledWith(
@@ -71,8 +71,8 @@ describe('apiClient', () => {
 
     (getToken as jest.Mock).mockReturnValueOnce('oldToken');
 
-    const { Get } = useApiClient();
-    const response = await Get('/test-endpoint', appModule);
+    const { Get } = useApiClient(appModule);
+    const response = await Get('/test-endpoint');
 
     expect(setToken).toHaveBeenCalledWith('newToken', appModule);
     expect(response).toEqual({ data: initialResponse });
@@ -107,9 +107,9 @@ describe('apiClient', () => {
     (fetch as jest.Mock).mockResolvedValueOnce({ ok: false });
 
     (getToken as jest.Mock).mockReturnValueOnce('oldToken');
-    const { Get } = useApiClient();
+    const { Get } = useApiClient('institutes');
 
-    await expect(Get('/test-endpoint', 'institutes')).rejects.toThrow();
+    await expect(Get('/test-endpoint')).rejects.toThrow();
     expect(removeToken).toHaveBeenCalledWith('institutes');
     expect(mockQueryClient.removeQueries).toHaveBeenCalledWith({
       queryKey: ['me'],
@@ -124,9 +124,9 @@ describe('apiClient', () => {
       json: vi.fn().mockResolvedValueOnce({ message: 'Internal Server Error' }),
     });
 
-    const { Get } = useApiClient();
+    const { Get } = useApiClient('students');
 
-    await expect(Get('/test-endpoint', 'students')).rejects.toEqual({
+    await expect(Get('/test-endpoint')).rejects.toEqual({
       status: 500,
       message: 'Internal Server Error: Something went wrong on our end.',
     });
@@ -139,9 +139,9 @@ describe('apiClient', () => {
       json: vi.fn().mockResolvedValueOnce({ message: 'Not Found' }),
     });
 
-    const { Get } = useApiClient();
+    const { Get } = useApiClient('students');
 
-    await expect(Get('/test-endpoint', 'students')).rejects.toEqual({
+    await expect(Get('/test-endpoint')).rejects.toEqual({
       status: 404,
       message: 'Not Found: The requested resource could not be found.',
     });
@@ -155,9 +155,9 @@ describe('apiClient', () => {
       json: vi.fn().mockResolvedValueOnce(unexpectedErrorResponse),
     });
 
-    const { Get } = useApiClient();
+    const { Get } = useApiClient('students');
 
-    await expect(Get('/test-endpoint', 'students')).rejects.toEqual({
+    await expect(Get('/test-endpoint')).rejects.toEqual({
       status: 418,
       message: unexpectedErrorResponse.message || 'An error occurred',
     });
@@ -170,8 +170,8 @@ describe('apiClient', () => {
       json: vi.fn(),
     });
 
-    const { Delete } = useApiClient();
-    const response = await Delete('/test-endpoint', 'students');
+    const { Delete } = useApiClient('students');
+    const response = await Delete('/test-endpoint');
 
     expect(response).toEqual({ data: {} });
     expect(fetch).toHaveBeenCalledWith(

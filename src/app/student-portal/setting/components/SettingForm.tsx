@@ -4,12 +4,11 @@ import { Form, Input, Select, Button, Switch, Radio, Row, Col } from 'antd';
 import { EditOutlined, SaveOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 const countryCodes = require('country-codes-list');
-import { useMutateData } from '@/hooks/useApi';
 const { Option } = Select;
-import { modules } from '@/utils/app-constant';
-import { removeToken } from '@/utils/auth';
-import { removeUser } from '@/utils/user';
 import { useRouter } from 'next/navigation';
+import { useStudentMutateData } from '@/hooks/student/useStudentApi';
+import { removeStudentToken } from '@/utils/student/student-auth';
+import { removeStudentUser } from '@/utils/student/student-user';
 
 type Editable = {
   [key: string]: boolean;
@@ -29,10 +28,9 @@ const SettingForm: React.FC = () => {
   });
   const phoneCodes: [CountyCodeType] = countryCodes.all();
   const [form] = Form.useForm();
-  const signOutMutation = useMutateData<{ access_token: string }>(
+  const signOutMutation = useStudentMutateData<{ access_token: string }>(
     '/api/students/v1/sessions',
     'Delete',
-    modules.students,
   );
 
   const toggleEdit = (field: string) => {
@@ -56,8 +54,8 @@ const SettingForm: React.FC = () => {
   const logOut = async () => {
     try {
       await signOutMutation.mutateAsync({});
-      removeToken(modules.students);
-      removeUser(modules.students);
+      removeStudentToken();
+      removeStudentUser();
       router.push('/student-portal/signin');
     } catch (error) {
       const err = error;

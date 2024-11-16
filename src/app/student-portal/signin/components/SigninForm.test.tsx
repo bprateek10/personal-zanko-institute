@@ -16,11 +16,11 @@ vi.mock('next/image', () => ({
   ),
 }));
 
-vi.mock('@/hooks/useApi', () => ({
-  useMutateData: vi.fn(() => ({
+vi.mock('@/hooks/student/useStudentApi', () => ({
+  useStudentMutateData: vi.fn(() => ({
     mutateAsync: vi.fn().mockResolvedValue({ access_token: 'mock_token' }),
   })),
-  useGetData: vi.fn(() => ({
+  useStudentGetData: vi.fn(() => ({
     data: null,
     refetch: vi.fn(),
   })),

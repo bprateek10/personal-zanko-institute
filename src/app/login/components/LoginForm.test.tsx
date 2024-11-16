@@ -1,72 +1,100 @@
-// LoginForm.test.tsx
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import LoginForm from './LoginForm';
+import LoginForm from '.';
+import {
+  useInstituteMutateData,
+  useInstituteGetData,
+} from '@/hooks/institute/useInstituteApi';
+import { setInstituteToken } from '@/utils/institute/institute-auth';
+import { useRouter } from 'next/navigation';
+
+vi.mock('@/hooks/institute/useInstituteApi', () => ({
+  useInstituteMutateData: vi.fn(),
+  useInstituteGetData: vi.fn(),
+}));
+
+vi.mock('@/utils/institute/institute-auth', () => ({
+  setInstituteToken: vi.fn(),
+}));
+
+vi.mock('@/utils/institute/institute-user', () => ({
+  setInstituteUser: vi.fn(),
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
+}));
 
 describe('LoginForm', () => {
-  it('renders the form with input fields', () => {
-    render(<LoginForm />);
+  const mockPush = vi.fn();
+  const mockMutateAsync = vi.fn();
 
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByText(/remember me/i)).toBeInTheDocument();
-    expect(screen.getByText(/forgot password\?/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+  beforeEach(() => {
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+    (useInstituteMutateData as jest.Mock).mockReturnValue({
+      mutateAsync: mockMutateAsync,
+      isError: false,
+      isPending: false,
+    });
+    (useInstituteGetData as jest.Mock).mockReturnValue({
+      data: null,
+      refetch: vi.fn(),
+    });
   });
 
-  it('submits the form with valid data', async () => {
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders the form correctly', () => {
+    render(<LoginForm />);
+
+    expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
+    expect(screen.getByText(/Login/i)).toBeInTheDocument();
+    expect(screen.getByText(/remember me/i)).toBeInTheDocument();
+    expect(screen.getByText(/forgot password\?/i)).toBeInTheDocument();
+  });
+
+  it('submits the form and handles login', async () => {
+    const mockData = { access_token: 'fake_token' };
+    mockMutateAsync.mockResolvedValue(mockData);
+    (useInstituteGetData as jest.Mock).mockReturnValue({
+      data: { id: 1, email: 'test@example.com' },
+      refetch: vi.fn(),
+    });
 
     render(<LoginForm />);
 
-    fireEvent.change(screen.getByLabelText(/email/i), {
+    fireEvent.input(screen.getByLabelText(/Email/i), {
       target: { value: 'test@example.com' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.input(screen.getByLabelText(/Password/i), {
       target: { value: 'password123' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.click(screen.getByText(/Login/i));
 
     await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith('Success:', {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'password123',
-        remember: true,
       });
+      expect(setInstituteToken).toHaveBeenCalledWith(mockData.access_token);
+      expect(mockPush).toHaveBeenCalledWith('/');
     });
-
-    logSpy.mockRestore();
   });
 
-  it('shows validation messages on submit with empty fields', async () => {
+  it('validates email and password fields', async () => {
     render(<LoginForm />);
 
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.click(screen.getByText(/Login/i));
 
     expect(
-      await screen.findByText(/please input your valid email!/i),
+      await screen.findByText(/Please enter a valid email/i),
     ).toBeInTheDocument();
     expect(
-      await screen.findByText(/please input your password!/i),
-    ).toBeInTheDocument();
-  });
-
-  it('shows password validation message if too short', async () => {
-    render(<LoginForm />);
-
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'short' },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
-
-    expect(
-      await screen.findByText(/password must be at least 8 characters long!/i),
+      await screen.findByText(/Please enter a password/i),
     ).toBeInTheDocument();
   });
 });

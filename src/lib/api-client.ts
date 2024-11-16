@@ -133,25 +133,17 @@ const apiClient = async <T>(
   }
 };
 
-export const useApiClient = () => {
+export const useApiClient = (module: string) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   return {
-    Get: <T>(endpoint: string, module: string): Promise<ApiResponse<T>> =>
+    Get: <T>(endpoint: string): Promise<ApiResponse<T>> =>
       apiClient<T>(endpoint, 'GET', null, router, queryClient, module),
-    Post: <T>(
-      endpoint: string,
-      body: unknown,
-      module: string,
-    ): Promise<ApiResponse<T>> =>
+    Post: <T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> =>
       apiClient<T>(endpoint, 'POST', body, router, queryClient, module),
-    Put: <T>(
-      endpoint: string,
-      body: unknown,
-      module: string,
-    ): Promise<ApiResponse<T>> =>
+    Put: <T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> =>
       apiClient<T>(endpoint, 'PUT', body, router, queryClient, module),
-    Delete: <T>(endpoint: string, module: string): Promise<ApiResponse<T>> =>
+    Delete: <T>(endpoint: string): Promise<ApiResponse<T>> =>
       apiClient<T>(endpoint, 'DELETE', null, router, queryClient, module),
   };
 };

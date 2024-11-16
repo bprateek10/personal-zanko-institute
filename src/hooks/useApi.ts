@@ -11,11 +11,11 @@ export const useGetData = <T>(
   enabled: boolean = true,
   module: string,
 ) => {
-  const { Get } = useApiClient();
+  const { Get } = useApiClient(module);
   return useQuery<T, Error>({
     queryKey: keys,
     queryFn: async () => {
-      const response = await Get<T>(endpoint, module);
+      const response = await Get<T>(endpoint);
       return response.data;
     },
     enabled,
@@ -28,23 +28,23 @@ export const useMutateData = <T>(
   method: string = 'Post',
   module: string,
 ): UseMutationResult<T, Error, unknown> => {
-  const { Post, Put, Delete } = useApiClient();
+  const { Post, Put, Delete } = useApiClient(module);
 
   return useMutation<T, Error, unknown>({
     mutationFn: async (values?: unknown) => {
       switch (method) {
         case 'Delete':
-          await Delete(endpoint, module);
+          await Delete(endpoint);
           return {} as T;
         case 'Put':
           if (values) {
-            const response = await Put<T>(endpoint, values, module);
+            const response = await Put<T>(endpoint, values);
             return response.data;
           }
           throw new Error('PUT request requires values');
         case 'Post':
         default:
-          const response = await Post<T>(endpoint, values, module);
+          const response = await Post<T>(endpoint, values);
           return response.data;
       }
     },

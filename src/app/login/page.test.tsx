@@ -1,26 +1,36 @@
 import { render, screen } from '@testing-library/react';
 import Login from './page';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}));
+
+const renderWithQueryClient = (ui: React.ReactNode) => {
+  const queryClient = new QueryClient();
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+  );
+};
 
 describe('Login Component', () => {
   it('renders correctly', () => {
-    render(<Login />);
+    renderWithQueryClient(<Login />);
 
-    // Check for the presence of the title
     const titleElement = screen.getByRole('heading', { name: /sign in/i });
     expect(titleElement).toBeInTheDocument();
 
-    // Check for the presence of images
     const logoImage = screen.getByAltText('logo');
     const coverImage = screen.getByAltText('cover');
     expect(logoImage).toBeInTheDocument();
     expect(coverImage).toBeInTheDocument();
 
-    // Check for the descriptive paragraph
     const descriptionElement = screen.getByText(/where amazing things happen/i);
     expect(descriptionElement).toBeInTheDocument();
 
-    // Check if LoginForm is rendered by looking for an element inside it
-    const loginForm = screen.getByLabelText(/email/i); // Example to find an email input
+    const loginForm = screen.getByLabelText(/email/i);
     expect(loginForm).toBeInTheDocument();
   });
 });

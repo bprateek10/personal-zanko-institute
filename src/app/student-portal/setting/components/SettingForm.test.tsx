@@ -4,13 +4,13 @@ import '@testing-library/jest-dom';
 import SettingForm from './SettingForm';
 import { vi } from 'vitest';
 import { useRouter } from 'next/navigation';
-import { useMutateData } from '@/hooks/useApi';
-import { removeToken } from '@/utils/auth';
-import { removeUser } from '@/utils/user';
+import { useStudentMutateData } from '@/hooks/student/useStudentApi';
+import { removeStudentToken } from '@/utils/student/student-auth';
+import { removeStudentUser } from '@/utils/student/student-user';
 
-vi.mock('@/hooks/useApi');
-vi.mock('@/utils/auth');
-vi.mock('@/utils/user');
+vi.mock('@/hooks/student/useStudentApi');
+vi.mock('@/utils/student/student-auth');
+vi.mock('@/utils/student/student-user');
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
@@ -21,7 +21,7 @@ describe('SettingForm', () => {
 
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
-    (useMutateData as jest.Mock).mockReturnValue({
+    (useStudentMutateData as jest.Mock).mockReturnValue({
       mutateAsync: mockMutateAsync,
     });
     vi.clearAllMocks();
@@ -114,8 +114,8 @@ describe('SettingForm', () => {
 
     await waitFor(() => {
       expect(mockMutateAsync).toHaveBeenCalled();
-      expect(removeToken).toHaveBeenCalledWith('students');
-      expect(removeUser).toHaveBeenCalledWith('students');
+      expect(removeStudentToken).toHaveBeenCalledWith();
+      expect(removeStudentUser).toHaveBeenCalledWith();
       expect(mockPush).toHaveBeenCalledWith('/student-portal/signin');
     });
   });

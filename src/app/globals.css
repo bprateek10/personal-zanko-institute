@@ -11,3 +11,7 @@ body {
     text-wrap: balance;
   }
 }
+
+.ant-popover-inner {
+  @apply !p-0;
+}

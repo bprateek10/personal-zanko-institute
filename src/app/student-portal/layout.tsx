@@ -6,11 +6,10 @@ import {
   MailOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
-import { modules } from '@/utils/app-constant';
-import { hasToken } from '../../utils/auth';
 import { useRouter } from 'next/navigation';
 
 import Link from 'next/link';
+import { hasStudentToken } from '@/utils/student/student-auth';
 
 type ItemType = {
   label?: string;
@@ -59,7 +58,7 @@ const EmbeddedLayout = ({
   };
 
   const checkToken = useCallback(() => {
-    if (!hasToken(modules.students)) {
+    if (!hasStudentToken()) {
       router.push('/student-portal/signin');
     }
   }, [router]);

@@ -5,11 +5,13 @@ import { GoogleOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMutateData, useGetData } from '@/hooks/useApi';
-import { setToken } from '@/utils/auth';
-import { modules } from '@/utils/app-constant';
 import { Student } from '@/interface/modals';
-import { setUser } from '@/utils/user';
+import {
+  useStudentGetData,
+  useStudentMutateData,
+} from '@/hooks/student/useStudentApi';
+import { setStudentToken } from '@/utils/student/student-auth';
+import { setStudentUser } from '@/utils/student/student-user';
 
 type FieldType = {
   email?: string;
@@ -19,23 +21,21 @@ type FieldType = {
 const SigninForm: React.FC = () => {
   const router = useRouter();
 
-  const signInMutation = useMutateData<{ access_token: string }>(
+  const signInMutation = useStudentMutateData<{ access_token: string }>(
     '/api/students/v1/sessions',
     'Post',
-    modules.students,
   );
-  const { data, refetch } = useGetData<Student>(
+  const { data, refetch } = useStudentGetData<Student>(
     '/api/students/v1/me',
     ['me'],
     false,
-    modules.students,
   );
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     try {
       const { email, password } = values;
       const res = await signInMutation.mutateAsync({ email, password });
-      setToken(res.access_token, modules.students);
+      setStudentToken(res.access_token);
       refetch();
       router.push('/student-portal/setting');
     } catch (error) {
@@ -45,7 +45,7 @@ const SigninForm: React.FC = () => {
 
   useEffect(() => {
     if (data) {
-      setUser(data, modules.students);
+      setStudentUser(data as Student);
     }
   }, [data, refetch, router]);
 
@@ -54,7 +54,7 @@ const SigninForm: React.FC = () => {
       <div className="w-full max-w-sm rounded-lg border-2 border-gray-300 bg-white p-8 shadow">
         <div className="mb-6 text-center">
           <Image
-            src={`/images/auth/logo.png`}
+            src={`/images/logo.png`}
             className="mx-auto mb-4"
             alt="Unib logo"
             width="100"

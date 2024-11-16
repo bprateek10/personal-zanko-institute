@@ -1,6 +1,6 @@
 'use client';
 
-import { Student } from '@/interface/modals';
+import { Student, Institute } from '@/interface/modals';
 
 const USER_KEY = 'user';
 
@@ -8,7 +8,10 @@ const USER_KEY = 'user';
  * Set the user data in localStorage.
  * @param user - The user data to be stored as an object.
  */
-export const setUser = (user: Student, moduleName: string): void => {
+export const setUser = (
+  user: Student | Institute,
+  moduleName: string,
+): void => {
   localStorage.setItem(`${moduleName}_${USER_KEY}`, JSON.stringify(user));
 };
 
@@ -16,7 +19,7 @@ export const setUser = (user: Student, moduleName: string): void => {
  * Get the user data from localStorage.
  * @returns The stored user data object or null if not found.
  */
-export const getUser = (module: string): Student => {
+export const getUser = (module: string): Student | Institute => {
   const userData = localStorage.getItem(`${module}_${USER_KEY}`);
   return userData ? JSON.parse(userData) : null;
 };
