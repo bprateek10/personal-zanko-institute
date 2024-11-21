@@ -59,7 +59,7 @@ describe('SettingForm', () => {
     const emailInput = screen.getByLabelText('Email');
     fireEvent.change(emailInput, { target: { value: '' } });
     const saveButton = screen.getByText('Save');
-    fireEvent.click(saveButton);
+    await fireEvent.click(saveButton);
 
     expect(await screen.findByText('Please enter a valid email')).toBeDefined();
   });
