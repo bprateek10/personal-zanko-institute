@@ -48,7 +48,7 @@ const SignupForm: React.FC = () => {
       <div className="w-full max-w-sm rounded-lg border-2 border-gray-300 bg-white p-8 shadow">
         <div className="mb-6 text-center">
           <Image
-            src={`/images/auth/logo.png`}
+            src={`/images/logo.png`}
             className="mx-auto mb-4"
             alt="Unib logo"
             width="100"
