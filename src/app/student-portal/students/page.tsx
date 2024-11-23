@@ -1,4 +1,10 @@
-import StudentsList from './components/StudentsList';
 export default function StudentPage() {
-  return <StudentsList />;
+  return (
+    <h1
+      style={{ zIndex: 12 }}
+      className="flex h-screen items-center justify-center"
+    >
+      Student
+    </h1>
+  );
 }
