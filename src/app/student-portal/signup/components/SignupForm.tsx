@@ -48,13 +48,14 @@ const SignupForm: React.FC = () => {
       <div className="w-full max-w-sm rounded-lg border-2 border-gray-300 bg-white p-8 shadow">
         <div className="mb-6 text-center">
           <Image
-            src={`/images/auth/logo.png`}
+            src={`/images/logo.png`}
             className="mx-auto mb-4"
             alt="Unib logo"
             width="100"
             height="100"
             priority
           />
+
           <h2 className="text-lg font-semibold">Create your account</h2>
           <p className="text-gray-500">
             Already have an account?{' '}
