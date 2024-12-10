@@ -61,7 +61,7 @@ describe('Layout Component', () => {
         </SidebarToggleContext.Provider>,
       );
 
-      expect(screen.queryByText('Loading...')).toBeNull();
+      expect(screen.queryByTestId('loader')).toBeNull();
     });
 
     it('should render the correct sidebar collapse behavior', () => {
@@ -123,7 +123,7 @@ describe('Layout Component', () => {
         </SidebarToggleContext.Provider>,
       );
 
-      expect(screen.getByText('Loading...')).toBeInTheDocument();
+      expect(screen.getByTestId('loader')).toBeInTheDocument();
     });
   });
 });

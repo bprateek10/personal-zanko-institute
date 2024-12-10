@@ -19,7 +19,7 @@ const Sidebar = () => {
         className={classNames(
           'relative pt-16 transition-all duration-300 ease-in-out',
           {
-            'w-32 md:w-44': !collapsed,
+            'w-32 md:w-56': !collapsed,
             'w-[75px] md:w-20': collapsed,
           },
         )}

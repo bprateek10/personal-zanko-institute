@@ -1,16 +1,15 @@
 'use client';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { hasInstituteToken } from '@/utils/institute/institute-auth';
 import Header from '@/components/header';
 import Sidebar from '@/components/sidebar';
-import { SidebarToggleContext } from '@/context/AppContext';
 import classNames from 'classnames';
+import Loader from '@/components/loader';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const { collapsed } = useContext(SidebarToggleContext);
 
   const checkToken = useCallback(() => {
     if (!hasInstituteToken()) {
@@ -25,7 +24,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [checkToken]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader fullScreen />;
   }
 
   return (
@@ -33,14 +32,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Header />
       <div className="flex">
         <Sidebar />
-        <div
-          className={classNames('w-full pl-4 pt-20', {
-            'pr-36 md:pr-4': !collapsed,
-            'pr-[91px] md:pr-4': collapsed,
-          })}
-        >
-          {children}
-        </div>
+        <div className={classNames('w-full pl-4 pr-4 pt-20')}>{children}</div>
       </div>
     </div>
   );

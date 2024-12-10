@@ -36,7 +36,7 @@ describe('Sidebar Component', () => {
     const sidebar = screen.getByRole('navigation');
 
     expect(sidebar).toHaveClass('w-32');
-    expect(sidebar).toHaveClass('md:w-44');
+    expect(sidebar).toHaveClass('md:w-56');
   });
 
   it('renders with collapsed width when collapsed', async () => {
