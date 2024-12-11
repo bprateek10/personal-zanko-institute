@@ -6,6 +6,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Filter from './components/filter';
 import Loader from '@/components/loader';
 import Listing from './components/listing';
+import ContentModal from '../components/contentModal';
 
 const dummyData = Array.from({ length: 23 }).map((_, i) => ({
   avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=${i}`,
@@ -19,13 +20,39 @@ const dummyData = Array.from({ length: 23 }).map((_, i) => ({
   status: 'Publised',
   date: '4 Aug, 2024',
 }));
+interface ContentDataType {
+  avatar: string;
+  author: string;
+  content: string;
+  img: string[];
+  status: string;
+  date: string;
+}
+
+interface ModalType {
+  open: boolean;
+  modalData: ContentDataType | null;
+}
 
 const ContentListing = () => {
+  const [{ open, modalData }, setOpen] = useState<ModalType>({
+    open: false,
+    modalData: null,
+  });
   const [data, setData] = useState(dummyData.slice(0, 7));
+
+  const openModal = (data: ContentDataType) => {
+    setOpen({ open: true, modalData: data });
+  };
+
+  const handleCancel = () => {
+    setOpen({ open: false, modalData: null });
+  };
 
   const loadMoreData = () => {
     setData(dummyData.slice(0, data.length + 7));
   };
+
   return (
     <>
       <div className="flex flex-col justify-between gap-2 md:flex-row">
@@ -69,9 +96,14 @@ const ContentListing = () => {
           scrollableTarget="scrollableDiv"
           className="!overflow-hidden"
         >
-          <Listing data={data} />
+          <Listing data={data} openModal={openModal} />
         </InfiniteScroll>
       </div>
+      <ContentModal
+        open={open}
+        handleCancel={handleCancel}
+        modalData={modalData}
+      />
     </>
   );
 };

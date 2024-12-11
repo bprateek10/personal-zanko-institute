@@ -3,8 +3,9 @@ import { MoreOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import Image from 'next/image';
 import React from 'react';
+import { MenuInfo } from 'rc-menu/lib/interface';
 
-type DataType = {
+type ContentDataType = {
   avatar: string;
   author: string;
   content: string;
@@ -13,7 +14,8 @@ type DataType = {
   date: string;
 };
 interface Props {
-  data: DataType[];
+  data: ContentDataType[];
+  openModal: (item: ContentDataType) => void;
 }
 
 const items: MenuProps['items'] = [
@@ -28,7 +30,12 @@ const items: MenuProps['items'] = [
   },
 ];
 
-const Listing = ({ data }: Props) => {
+const Listing = ({ data, openModal }: Props) => {
+  const handleMenuClick = (e: MenuInfo, record: ContentDataType) => {
+    if (e.key === 'preview') {
+      openModal(record);
+    }
+  };
   return (
     <List
       data-testid="list"
@@ -61,7 +68,10 @@ const Listing = ({ data }: Props) => {
                   ? item.content.substring(0, 150) + '... '
                   : item.content}
                 {item.content.length > 80 && (
-                  <span className="!p-0 !text-primary hover:underline">
+                  <span
+                    className="cursor-pointer !p-0 !text-primary hover:underline"
+                    onClick={() => openModal(item)}
+                  >
                     Read More
                   </span>
                 )}{' '}
@@ -106,6 +116,7 @@ const Listing = ({ data }: Props) => {
                       ? { label: 'Draft', key: 'draft' }
                       : { label: 'Publish', key: 'publish' },
                   ],
+                  onClick: (e) => handleMenuClick(e, item),
                 }}
               >
                 <MoreOutlined aria-label="More options" className="!text-lg" />
