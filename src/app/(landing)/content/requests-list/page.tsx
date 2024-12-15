@@ -1,12 +1,16 @@
 'use client';
-import { Button, Dropdown } from 'antd';
-import { AlignCenterOutlined, PlusOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 import React, { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import Filter from './components/filter';
-import Loader from '@/components/loader';
-import Listing from './components/listing';
 import ContentModal from '../components/contentModal';
+import Listing from '../content-list/components/listing';
+
+interface ContentDataType {
+  avatar: string;
+  author: string;
+  content: string;
+  img: string[];
+}
 
 const dummyData = Array.from({ length: 23 }).map((_, i) => ({
   avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=${i}`,
@@ -17,19 +21,9 @@ const dummyData = Array.from({ length: 23 }).map((_, i) => ({
     'https://next-images.123rf.com/index/_next/image/?url=https://assets-cdn.123rf.com/index/static/assets/top-section-bg.jpeg&w=3840&q=75',
     'https://i0.wp.com/picjumbo.com/wp-content/uploads/camping-on-top-of-the-mountain-during-sunset-free-photo.jpg?w=600&quality=80',
   ],
-  status: 'Publised',
-  date: '4 Aug, 2024',
 }));
-interface ContentDataType {
-  avatar: string;
-  author: string;
-  content: string;
-  img: string[];
-  status?: string;
-  date?: string;
-}
 
-const ContentListing = () => {
+const RequestsList = () => {
   const [selectedContent, setSelectedContent] = useState<ContentDataType>();
   const [data, setData] = useState(dummyData.slice(0, 7));
 
@@ -49,46 +43,23 @@ const ContentListing = () => {
     <>
       <div className="flex flex-col justify-between gap-2 md:flex-row">
         <h1 className="flex justify-center pl-3 pt-1 text-3xl font-bold">
-          Content
+          Approval Requests
         </h1>
-        <div className="flex justify-center">
-          <Button
-            className="!rounded-md !bg-primary !p-5 !text-white"
-            icon={<PlusOutlined />}
-          >
-            New Post
-          </Button>
-        </div>
-      </div>
-      <div className="flex w-full flex-col items-center gap-4 pb-8 pt-4 md:flex-row md:justify-center">
-        <Filter />
-        <div className="self-start md:ml-auto md:mr-4 md:self-center">
-          <Dropdown
-            menu={{
-              items: [
-                { label: 'Published', key: 'published' },
-                { label: 'Uploaded', key: 'uploaded' },
-              ],
-            }}
-          >
-            <AlignCenterOutlined className="!text-lg" />
-          </Dropdown>
-        </div>
       </div>
       <div
         data-testid="scrollableDiv"
         id="scrollableDiv"
-        className="no-scrollbar grid h-[calc(100vh_-_441px)] gap-4 overflow-y-scroll md:h-[calc(100vh_-_251px)]"
+        className="no-scrollbar mt-6 grid h-[calc(100vh_-_441px)] gap-4 overflow-y-scroll md:h-[calc(100vh_-_151px)]"
       >
         <InfiniteScroll
           dataLength={data.length}
           next={loadMoreData}
           hasMore={data.length < 20}
-          loader={<Loader size="default" />}
+          loader={<Spin />}
           scrollableTarget="scrollableDiv"
           className="!overflow-hidden"
         >
-          <Listing data={data} openModal={openModal} />
+          <Listing data={data} openModal={openModal} showRequestActions />
         </InfiniteScroll>
       </div>
       <ContentModal handleCancel={handleCancel} modalData={selectedContent} />
@@ -96,4 +67,4 @@ const ContentListing = () => {
   );
 };
 
-export default ContentListing;
+export default RequestsList;

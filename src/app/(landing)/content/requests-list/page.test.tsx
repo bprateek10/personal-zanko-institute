@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import ContentListing from './page';
+import RequestsList from './page';
 
 vi.mock('next/image', () => ({
   __esModule: true,
@@ -10,27 +10,15 @@ vi.mock('next/image', () => ({
 describe('Content Component', () => {
   describe('Rendering UI Elements', () => {
     it('should render the Content heading', () => {
-      render(<ContentListing />);
-      const heading = screen.getByText('Content');
+      render(<RequestsList />);
+      const heading = screen.getByText('Approval Requests');
       expect(heading).toBeInTheDocument();
-    });
-
-    it('should render the New Post button and be clickable', () => {
-      render(<ContentListing />);
-      const newPostButton = screen.getByRole('button', { name: /New Post/i });
-      expect(newPostButton).toBeInTheDocument();
-      fireEvent.click(newPostButton);
-    });
-
-    it('should render the Filter component', () => {
-      render(<ContentListing />);
-      expect(screen.getByTestId('filter')).toBeInTheDocument();
     });
   });
 
   describe('Infinite Scroll', () => {
     it('should load more data when "Load More" button is clicked', async () => {
-      render(<ContentListing />);
+      render(<RequestsList />);
       const listItems = screen.getAllByRole('listitem');
       expect(listItems).toHaveLength(21);
 
@@ -44,9 +32,10 @@ describe('Content Component', () => {
         expect(updatedListItems).toHaveLength(42);
       });
     });
-    it('should render the Listing component', () => {
-      render(<ContentListing />);
-      expect(screen.getByTestId('list')).toBeInTheDocument();
-    });
+  });
+
+  it('should render the Listing component', () => {
+    render(<RequestsList />);
+    expect(screen.getByTestId('list')).toBeInTheDocument();
   });
 });

@@ -15,48 +15,37 @@ describe('ContentModal', () => {
   const handleCancel = vi.fn();
 
   it('renders the modal with correct data', () => {
-    render(
-      <ContentModal
-        open={true}
-        handleCancel={handleCancel}
-        modalData={modalData}
-      />,
-    );
+    render(<ContentModal handleCancel={handleCancel} modalData={modalData} />);
     const avatar = screen.getByAltText('0-img');
     expect(avatar).toBeInTheDocument();
+
     const author = screen.getByText(modalData.author);
     expect(author).toBeInTheDocument();
+
     const content = screen.getByText(modalData.content);
     expect(content).toBeInTheDocument();
+
     const statusTag = screen.getByText(modalData.status);
     expect(statusTag).toBeInTheDocument();
+
     const dateTag = screen.getByText(modalData.date);
     expect(dateTag).toBeInTheDocument();
+
     const carouselImages = screen.getAllByAltText(/-img/);
     expect(carouselImages.length).toBe(modalData.img.length);
   });
 
   it('calls handleCancel when modal is closed', () => {
-    render(
-      <ContentModal
-        open={true}
-        handleCancel={handleCancel}
-        modalData={modalData}
-      />,
-    );
+    render(<ContentModal handleCancel={handleCancel} modalData={modalData} />);
     const cancelButton = screen.getByRole('button', { name: /close/i });
     fireEvent.click(cancelButton);
     expect(handleCancel).toHaveBeenCalled();
   });
 
   it('does not render modal when open is false', () => {
-    render(
-      <ContentModal
-        open={false}
-        handleCancel={handleCancel}
-        modalData={modalData}
-      />,
-    );
+    const modalData = undefined;
+
+    render(<ContentModal handleCancel={handleCancel} modalData={modalData} />);
     const modal = screen.queryByTestId('content-modal');
     expect(modal).not.toBeInTheDocument();
   });
@@ -65,7 +54,6 @@ describe('ContentModal', () => {
     const dataWithPublishedStatus = { ...modalData, status: 'Published' };
     render(
       <ContentModal
-        open={true}
         handleCancel={handleCancel}
         modalData={dataWithPublishedStatus}
       />,
@@ -77,7 +65,6 @@ describe('ContentModal', () => {
     const dataWithUnpublishedStatus = { ...modalData, status: 'draft' };
     render(
       <ContentModal
-        open={true}
         handleCancel={handleCancel}
         modalData={dataWithUnpublishedStatus}
       />,
@@ -88,13 +75,7 @@ describe('ContentModal', () => {
   });
 
   it('renders multiple images in the carousel', () => {
-    render(
-      <ContentModal
-        open={true}
-        handleCancel={handleCancel}
-        modalData={modalData}
-      />,
-    );
+    render(<ContentModal handleCancel={handleCancel} modalData={modalData} />);
     const images = screen.getAllByAltText(/-img/);
     expect(images.length).toBe(modalData.img.length);
     expect(images[0]).toHaveAttribute(

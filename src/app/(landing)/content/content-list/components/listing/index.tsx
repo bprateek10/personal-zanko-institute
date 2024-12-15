@@ -1,5 +1,5 @@
-import { Avatar, Carousel, Dropdown, List, MenuProps, Tag } from 'antd';
-import { MoreOutlined } from '@ant-design/icons';
+import { Avatar, Button, Carousel, Dropdown, List, MenuProps, Tag } from 'antd';
+import { CheckOutlined, CloseOutlined, MoreOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import Image from 'next/image';
 import React from 'react';
@@ -10,12 +10,13 @@ type ContentDataType = {
   author: string;
   content: string;
   img: string[];
-  status: string;
-  date: string;
+  status?: string;
+  date?: string;
 };
 interface Props {
   data: ContentDataType[];
-  openModal: (item: ContentDataType) => void;
+  openModal: (data: ContentDataType) => void;
+  showRequestActions?: boolean;
 }
 
 const items: MenuProps['items'] = [
@@ -30,7 +31,7 @@ const items: MenuProps['items'] = [
   },
 ];
 
-const Listing = ({ data, openModal }: Props) => {
+const Listing = ({ data, openModal, showRequestActions = false }: Props) => {
   const handleMenuClick = (e: MenuInfo, record: ContentDataType) => {
     if (e.key === 'preview') {
       openModal(record);
@@ -105,6 +106,20 @@ const Listing = ({ data, openModal }: Props) => {
                   </Tag>
                 )}
               </div>
+              {showRequestActions && (
+                <div className="-mr-3 flex gap-4 self-end">
+                  <Button
+                    type="primary"
+                    className="!bg-green-600"
+                    icon={<CheckOutlined />}
+                  >
+                    Approve
+                  </Button>
+                  <Button type="primary" danger icon={<CloseOutlined />}>
+                    Rejected
+                  </Button>
+                </div>
+              )}
             </div>
             <div className="absolute right-1 cursor-pointer md:right-5">
               <Dropdown

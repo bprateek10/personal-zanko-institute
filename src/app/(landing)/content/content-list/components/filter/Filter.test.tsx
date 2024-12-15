@@ -11,6 +11,7 @@ describe('Filter Component', () => {
     });
     expect(statusSelect).toBeInTheDocument();
     expect(authorsSelect).toBeInTheDocument();
+
     expect(screen.getByRole('button', { name: /filter/i })).toBeInTheDocument();
   });
 });

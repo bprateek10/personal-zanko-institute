@@ -8,20 +8,19 @@ interface ContentDataType {
   author: string;
   content: string;
   img: string[];
-  status: string;
-  date: string;
+  status?: string;
+  date?: string;
 }
 
 interface props {
-  open: boolean;
   handleCancel: () => void;
-  modalData: ContentDataType | null;
+  modalData: ContentDataType | undefined;
 }
 
-const ContentModal = ({ open, handleCancel, modalData }: props) => {
+const ContentModal = ({ handleCancel, modalData }: props) => {
   return (
     <Modal
-      open={open}
+      open={!!modalData}
       centered
       onCancel={handleCancel}
       footer={null}

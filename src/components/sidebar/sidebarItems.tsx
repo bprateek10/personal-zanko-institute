@@ -1,8 +1,8 @@
 import {
-  DesktopOutlined,
   FileDoneOutlined,
   FileOutlined,
   HomeOutlined,
+  YoutubeOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 
@@ -12,7 +12,7 @@ export const items: MenuItem[] = [
   { key: '/', icon: <HomeOutlined />, label: 'Home' },
   {
     key: '/content',
-    icon: <DesktopOutlined />,
+    icon: <YoutubeOutlined />,
     label: 'Content',
     children: [
       {
@@ -21,7 +21,7 @@ export const items: MenuItem[] = [
         icon: <FileOutlined />,
       },
       {
-        key: '/content/approval-requests',
+        key: '/content/requests-list',
         label: 'Approval Requests',
         icon: <FileDoneOutlined />,
       },
